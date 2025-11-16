@@ -1,5 +1,6 @@
 import soundfile as sf
 import numpy as np
+import sounddevice as sd
 class audioFile:
 
 
@@ -11,3 +12,8 @@ class audioFile:
 # usage: audio.saveFile("newName.wav") can look into appending a file format when user chooses to save
     def saveFile(self, new_file_name):
         sf.write(new_file_name, self.audio_data, self.samp_freq)
+
+# usage: audio.playSound()
+    def playSound(self):
+        sd.play(self.audio_data, self.samp_freq)
+        sd.wait()
