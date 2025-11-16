@@ -1,3 +1,6 @@
+#all needed info on tkinter for GUI can be found here:
+# https://www.geeksforgeeks.org/python/python-tkinter-tutorial/
+
 import tkinter as tk
 
 root = tk.Tk()
