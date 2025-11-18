@@ -53,29 +53,28 @@ class UI(ctk.CTk):
 
 
 
-        self.filters_frame = ctk.CTkFrame(self.toolbar_frame, fg_color="grey", height=toolbar_height)
-        self.filters_frame.grid(row=0, column=1, sticky="ew")
-        self.filters_frame.grid_columnconfigure((0, 1, 2), weight=1)
-        self.filters_frame.grid_rowconfigure(0, weight=1)
+        self.controls_frame = ctk.CTkFrame(self.toolbar_frame, height=toolbar_height)
+        self.controls_frame.grid(row=0, column=1, sticky="nsew")
+        self.controls_frame.grid_columnconfigure((0, 1), weight=1)
+        self.controls_frame.grid_rowconfigure(0, weight=1)
 
         control_button_width = 10
         control_button_color = "grey"
         control_button_color_hover = "darkgreen"
 
-        self.close_program_button = ctk.CTkButton(self.files_frame, text="Close Program", command=self.on_close,
-                                           fg_color="darkred", hover_color="red")
+
+        self.play_button = ctk.CTkButton(self.controls_frame, text="Play", command=self.play_audio, width=control_button_width,
+                                           fg_color=control_button_color, hover_color=control_button_color_hover)
+        self.play_button.grid(row=0, column=0, sticky="nsew")
+        self.pause_button = ctk.CTkButton(self.controls_frame, text="Pause", command=self.play_audio, width=control_button_width,
+                                           fg_color=control_button_color, hover_color=control_button_color_hover)
+        self.pause_button.grid(row=0, column=1, sticky="nsew")
 
 
 
-        self.controls_frame = ctk.CTkFrame(self.toolbar_frame, height=toolbar_height)
-        self.controls_frame.grid(row=0, column=2, sticky="ew")
+        self.filters_frame = ctk.CTkFrame(self.toolbar_frame, fg_color="grey", height=toolbar_height)
+        self.filters_frame.grid(row=0, column=2, sticky="ew")
 
-        #         self.play_button = tk.Button(self.control_frame, text="Play", command=self.load_file)
-        #         self.play_button.pack(side = "left", expand = True, fill = "x")
-        #         self.pause_button = tk.Button(self.control_frame, text="Pause", command=self.load_file)
-        #         self.pause_button.pack(side = "left", expand = True, fill = "x")
-        #         self.replay_button = tk.Button(self.control_frame, text="Replay", command=self.load_file)
-        #         self.replay_button.pack(side = "left", expand = True, fill = "x")
 
 
         self.graph_frame = ctk.CTkFrame(self, fg_color="darkred")
@@ -87,22 +86,6 @@ class UI(ctk.CTk):
         self.wave_graph = ctk.CTkCanvas(self.graph_frame)
         self.wave_graph.grid(row=0, column=0, sticky="nsew")
 
-
-# # #some example buttons
-# #         self.import_label = tk.Label(root, text="Test Input")
-# #         self.import_label.pack(side="left")
-# #         self.import_entry = tk.Entry(root,)
-# #         self.import_entry.pack(side="left")
-# #
-# #
-# #         self.import_button = tk.Button(root, text="Import Audio File", command=self.load_file)
-# #         self.import_button.pack(pady=10)
-# #
-# #         self.import_button = tk.Button(root, text="Export Audio File", command=self.export_file)
-# #         self.import_button.pack(pady=10)
-# #
-# #         self.import_button = tk.Button(root, text="Play", command=self.play_audio)
-# #         self.import_button.pack(pady=10)
 
     def on_close(self):
         self.destroy()
@@ -153,3 +136,12 @@ class UI(ctk.CTk):
                 messagebox.showerror("Error", f"Could not play file:\n{e}")
         else:
             messagebox.showwarning("No file", "Please load a file first!")
+
+    def pause_audio(self):
+        if self.audio:
+            try:
+                self.audio.pauseSound()
+            except Exception as e:
+                messagebox.showerror("Error", f"Could not pause file:\n{e}")
+        else:
+            messagebox.showwarning("No file", "Please play a file first!")
