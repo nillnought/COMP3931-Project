@@ -6,7 +6,7 @@ from audioFile import audioFile
 def main():
     app = UI()
     app.mainloop()
-    # audio = audioFile("C:\\Users\\GGlaim\\Desktop\\slide_whistle.wav")
+    # audio = audioFile("test.wav")
     # audio.drawAmpDomain()
     # audio.drawFreqDomain()
 
