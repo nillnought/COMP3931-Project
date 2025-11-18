@@ -1,7 +1,7 @@
 import soundfile as sf
 import numpy as np
 import sounddevice as sd
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from scipy.fft import fft, fftfreq
 class audioFile:
 
@@ -12,7 +12,10 @@ class audioFile:
         self.audio_data, self.samp_freq = sf.read(file_location)
         self.playing = False
         audio_file = sf.SoundFile(file_location)
-        self.duration = audio_file.frames / audio_file.samplerate
+        total_duration = audio_file.frames / audio_file.samplerate
+        self.duration = np.linspace(
+            0, total_duration, len(self.audio_data)
+        )
 
 # usage: audio.saveFile("newName.wav") can look into appending a file format when user chooses to save
     def saveFile(self, new_file_name):

@@ -1,14 +1,14 @@
 # runs the whole application
 
-import tkinter as tk
 from UI import UI
+from audioFile import audioFile
 
 def main():
-    # root = tk.Tk()
-    # app = UI(root)
-    # root.mainloop()
     app = UI()
     app.mainloop()
+    # audio = audioFile("C:\\Users\\GGlaim\\Desktop\\slide_whistle.wav")
+    # audio.drawAmpDomain()
+    # audio.drawFreqDomain()
 
 if __name__ == "__main__":
     main()
