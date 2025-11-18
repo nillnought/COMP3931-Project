@@ -7,7 +7,8 @@ class audioFile:
 # usage: audio = audioFile("filename.wav")
     def __init__(self, file_location):
         self.file_address = file_location
-        self.audio_data, self.samp_freq = sf.read(file_address)
+        self.audio_data, self.samp_freq = sf.read(file_location)
+        self.playing = False
 
 # usage: audio.saveFile("newName.wav") can look into appending a file format when user chooses to save
     def saveFile(self, new_file_name):
@@ -16,4 +17,11 @@ class audioFile:
 # usage: audio.playSound()
     def playSound(self):
         sd.play(self.audio_data, self.samp_freq)
+        self.playing = True
         sd.wait()
+        self.playing = False
+    
+    def pauseSound(self):
+        if(self.playing):
+            #pause logic
+            print("pause")
