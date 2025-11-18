@@ -35,9 +35,10 @@ class audioFile:
 
 #need to test
     def drawAmpDomain(self):
-        plt.figure(figsize=(10, 5))
-        plt.plot(self.duration, self.audio_data)
-        plt.show()
+        fig = plt.figure(figsize=(10, 5))
+        ax = fig.add_subplot(111)
+        ax.plot(self.duration, self.audio_data)
+        return fig
 
 #need to test
     def drawFreqDomain(self):
@@ -45,6 +46,10 @@ class audioFile:
         yf = fft(self.audio_data)
         xf = fftfreq(N, 1/self.samp_freq)[:N // 2]
 
-        plt.figure(figsize=(10,5))
-        plt.plot(xf, np.abs(yf[:N //2]))
-        plt.show()
+        fig = plt.figure(figsize=(10,5))
+        ax = fig.add_subplot(111)
+        
+        ax.plot(xf, np.abs(yf[:N //2]))
+
+        return fig
+        
