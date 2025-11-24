@@ -33,14 +33,14 @@ class audioFile:
             #pause logic
             print("pause")
 
-#need to test
+
     def drawAmpDomain(self):
         fig = plt.figure(figsize=(10, 5))
         ax = fig.add_subplot(111)
         ax.plot(self.duration, self.audio_data)
         return fig
 
-#need to test
+
     def drawFreqDomain(self):
         N = len(self.audio_data)
         yf = fft(self.audio_data)
