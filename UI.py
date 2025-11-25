@@ -52,15 +52,21 @@ class UI(ctk.CTk):
 
         self.graph_label_freq = ctk.CTkLabel(self.graph_frame, fg_color=self.label_color, text="Frequency Domain", anchor="w", padx=10)
         self.graph_label_freq.grid(row=0, column=0, sticky="ew")
-        self.freq_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color, highlightbackground=self.graph_color)
-        self.freq_domain_graph.grid(row=1, column=0, sticky="ew")
+        self.freq_domain_graph = None
 
         self.graph_label_time = ctk.CTkLabel(self.graph_frame, fg_color=self.label_color, text="Amplitude Domain", anchor="w", padx=10)
         self.graph_label_time.grid(row=2, column=0, sticky="ew")
+        self.amp_domain_graph = None
+
+        self.update_graphs()
+
+    def update_graphs(self):
+        self.freq_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color, highlightbackground=self.graph_color)
+        self.freq_domain_graph.grid(row=1, column=0, sticky="ew")
+
         self.amp_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color, highlightbackground=self.graph_color)
         self.amp_domain_graph.grid(row=3, column=0, sticky="ew")
 
-    def update_graphs(self):
         if self.audio:
             canvas_freq = FigureCanvasTkAgg(self.audio.drawFreqDomain(), self.freq_domain_graph)
             canvas_freq.draw()
@@ -75,14 +81,6 @@ class UI(ctk.CTk):
             toolbar = NavigationToolbar2Tk(canvas_amp, self.amp_domain_graph)
             toolbar.update()
             canvas_amp.get_tk_widget().pack()
-        else:
-            self.freq_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color, highlightbackground=self.graph_color)
-            self.freq_domain_graph.grid(row=3, column=0, sticky="ew")
-
-            self.amp_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color,
-                                                  highlightbackground=self.graph_color)
-            self.amp_domain_graph.grid(row=3, column=0, sticky="ew")
-            print("Graph Reset")
 
 
     def on_close(self):
