@@ -5,10 +5,10 @@ from audioFile import audioFile
 from filter import highPass, lowPass, bandPass, echo, reverb
 
 def main():
-    # app = UI()
-    # app.mainloop()
-    audio = audioFile("test.wav")
-    audio.playSound()
+    app = UI()
+    app.mainloop()
+    # audio = audioFile("test.wav")
+    # audio.playSound()
     # YAY LOW PASS WORKS!!!
     # audio.audio_data = lowPass(audio.audio_data, audio.samp_freq, 600)
     # audio.playSound()

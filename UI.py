@@ -6,6 +6,9 @@ import tkinter as tk
 from tkinter import messagebox
 import customtkinter as ctk
 from customtkinter import filedialog
+from matplotlib.backends._backend_tk import NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 from audioFile import audioFile
 import filter
 
@@ -38,19 +41,48 @@ class UI(ctk.CTk):
         self.filters_frame = FiltersFrame(self, toolbar_height)
 
 
+        self.label_color = "#4d5055"
+        self.graph_color = "#1d1e23"
+
+
         self.graph_frame = ctk.CTkFrame(self, fg_color="darkred")
         self.graph_frame.grid(row=1, column=0, sticky="nsew")
         self.graph_frame.grid_columnconfigure(0, weight=1)
         self.graph_frame.grid_rowconfigure((1, 3), weight=1)
 
-        self.graph_label_freq = ctk.CTkLabel(self.graph_frame, fg_color="black", text="Frequency Domain", anchor="w", padx=10)
+        self.graph_label_freq = ctk.CTkLabel(self.graph_frame, fg_color=self.label_color, text="Frequency Domain", anchor="w", padx=10)
         self.graph_label_freq.grid(row=0, column=0, sticky="ew")
-        self.freq_domain_graph = ctk.CTkCanvas(self.graph_frame)
+        self.freq_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color, highlightbackground=self.graph_color)
         self.freq_domain_graph.grid(row=1, column=0, sticky="ew")
-        self.graph_label_time = ctk.CTkLabel(self.graph_frame, fg_color="black", text="Time Domain", anchor="w", padx=10)
+
+        self.graph_label_time = ctk.CTkLabel(self.graph_frame, fg_color=self.label_color, text="Amplitude Domain", anchor="w", padx=10)
         self.graph_label_time.grid(row=2, column=0, sticky="ew")
-        self.time_domain_graph = ctk.CTkCanvas(self.graph_frame)
-        self.time_domain_graph.grid(row=3, column=0, sticky="ew")
+        self.amp_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color, highlightbackground=self.graph_color)
+        self.amp_domain_graph.grid(row=3, column=0, sticky="ew")
+
+    def update_graphs(self):
+        if self.audio:
+            canvas_freq = FigureCanvasTkAgg(self.audio.drawFreqDomain(), self.freq_domain_graph)
+            canvas_freq.draw()
+            canvas_freq.get_tk_widget().pack()
+            toolbar = NavigationToolbar2Tk(canvas_freq, self.freq_domain_graph)
+            toolbar.update()
+            canvas_freq.get_tk_widget().pack()
+
+            canvas_amp = FigureCanvasTkAgg(self.audio.drawAmpDomain(), self.amp_domain_graph)
+            canvas_amp.draw()
+            canvas_amp.get_tk_widget().pack()
+            toolbar = NavigationToolbar2Tk(canvas_amp, self.amp_domain_graph)
+            toolbar.update()
+            canvas_amp.get_tk_widget().pack()
+        else:
+            self.freq_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color, highlightbackground=self.graph_color)
+            self.freq_domain_graph.grid(row=3, column=0, sticky="ew")
+
+            self.amp_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color,
+                                                  highlightbackground=self.graph_color)
+            self.amp_domain_graph.grid(row=3, column=0, sticky="ew")
+            print("Graph Reset")
 
 
     def on_close(self):
@@ -66,6 +98,7 @@ class UI(ctk.CTk):
             try:
                 self.audio = audioFile(file_path)
                 self.filters_frame.enable_filters()
+                self.update_graphs()
                 messagebox.showinfo("Loaded", f"Loaded file:\n{file_path}")
             except Exception as e:
                 messagebox.showerror("Error", f"Could not load file:\n{e}")
@@ -91,6 +124,7 @@ class UI(ctk.CTk):
             try:
                 self.audio = None
                 self.filters_frame.disable_filters()
+                self.update_graphs()
             except Exception as e:
                 messagebox.showerror("Error", f"Could not close file:\n{e}")
         else:
@@ -127,20 +161,20 @@ class FilesFrame(ctk.CTkFrame):
         self.files_frame.grid_rowconfigure((0, 1, 2, 3), weight=1)
         self.files_frame.grid_propagate(False)
 
-        file_button_color = "grey"
+        file_button_color = "#2f343a"
         file_button_color_hover = "darkgreen"
 
         self.close_program_button = ctk.CTkButton(self.files_frame, text="Close Program", command=master.on_close,
-                                           fg_color="darkred", hover_color="red")
+                                           fg_color="darkred", hover_color="red", corner_radius=0)
         self.close_program_button.grid(row=0, column=0, sticky="nsew")
         self.import_button = ctk.CTkButton(self.files_frame, text="Import File", command=master.import_file,
-                                           fg_color=file_button_color, hover_color=file_button_color_hover)
+                                           fg_color=file_button_color, hover_color=file_button_color_hover, corner_radius=0)
         self.import_button.grid(row=1, column=0, sticky="nsew")
         self.export_button = ctk.CTkButton(self.files_frame, text="Export File", command=master.export_file,
-                                           fg_color=file_button_color, hover_color=file_button_color_hover)
+                                           fg_color=file_button_color, hover_color=file_button_color_hover, corner_radius=0)
         self.export_button.grid(row=2, column=0, sticky="nsew")
-        self.close_button = ctk.CTkButton(self.files_frame, text="Close File", command=master.export_file,
-                                           fg_color=file_button_color, hover_color=file_button_color_hover)
+        self.close_button = ctk.CTkButton(self.files_frame, text="Close File", command=master.close_file,
+                                           fg_color=file_button_color, hover_color=file_button_color_hover, corner_radius=0)
         self.close_button.grid(row=3, column=0, sticky="nsew")
 
 class ControlsFrame(ctk.CTkFrame):
@@ -154,35 +188,35 @@ class ControlsFrame(ctk.CTkFrame):
         self.controls_frame.grid_propagate(False)
 
         control_button_width = 10
-        control_button_color = "grey"
+        control_button_color = "#2f343a"
         control_button_color_hover = "darkgreen"
 
         self.play_button = ctk.CTkButton(self.controls_frame, text="Play", command=master.play_audio,
                                          width=control_button_width,
-                                         fg_color=control_button_color, hover_color=control_button_color_hover)
+                                         fg_color=control_button_color, hover_color=control_button_color_hover, corner_radius=0)
         self.play_button.grid(row=0, column=0, sticky="nsew")
         self.pause_button = ctk.CTkButton(self.controls_frame, text="Pause", command=master.pause_audio,
                                           width=control_button_width,
-                                          fg_color=control_button_color, hover_color=control_button_color_hover)
+                                          fg_color=control_button_color, hover_color=control_button_color_hover, corner_radius=0)
         self.pause_button.grid(row=0, column=1, sticky="nsew")
 
 class FiltersFrame(ctk.CTkFrame):
     def __init__(self, master, height):
         super().__init__(master)
 
-        self.filters_frame = ctk.CTkFrame(master.toolbar_frame, fg_color="grey", height=height)
+        self.filters_frame = ctk.CTkFrame(master.toolbar_frame, fg_color="#2f343a", height=height)
         self.filters_frame.grid(row=0, column=2, sticky="nsew")
         self.filters_frame.grid_columnconfigure(0, weight=1)
         self.filters_frame.grid_columnconfigure(1, weight=3)
         self.filters_frame.grid_rowconfigure(0, weight=1)
         self.filters_frame.grid_propagate(False)
 
-        self.select_filter_frame = ctk.CTkFrame(self.filters_frame, fg_color="grey")
+        self.select_filter_frame = ctk.CTkFrame(self.filters_frame, fg_color="#2f343a")
         self.select_filter_frame.grid(row=0, column=0, sticky="nsew", padx = 15, pady = 5)
         self.select_filter_frame.grid_columnconfigure(0, weight=1)
         self.select_filter_frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
 
-        self.textbox_frame = ctk.CTkFrame(self.filters_frame, fg_color="grey")
+        self.textbox_frame = ctk.CTkFrame(self.filters_frame, fg_color="#2f343a")
         self.textbox_frame.grid(row=0, column=1, sticky="ew", padx = 15, pady = 5)
 
         def only_numbers(n):
@@ -206,15 +240,18 @@ class FiltersFrame(ctk.CTkFrame):
         def apply_filter():
             match master.filter.get():
                 case "reverb":
-                    master.audio = filter.reverb(master.audio, master.audio.samp_freq)
+                    master.audio.audio_data = filter.reverb(master.audio.audio_data, master.audio.samp_freq)
                 case "echo":
-                    master.audio = filter.echo(master.audio, master.audio.samp_freq)
+                    master.audio.audio_data = filter.echo(master.audio.audio_data, master.audio.samp_freq)
                 case "lowpass":
-                    master.audio = filter.lowPass(master.audio, master.audio.samp_freq, self.textbox1.get())
+                    master.audio.audio_data = filter.lowPass(master.audio.audio_data, master.audio.samp_freq, int(self.textbox1.get()))
                 case "highpass":
-                    master.audio = filter.highPass(master.audio, master.audio.samp_freq, self.textbox2.get())
+                    master.audio.audio_data = filter.highPass(master.audio.audio_data, master.audio.samp_freq, int(self.textbox2.get()))
                 case "bandpass":
-                    master.audio = filter.bandPass(master.audio, master.audio.samp_freq, self.textbox1.get(), self.textbox2.get())
+                    master.audio.audio_data = filter.bandPass(master.audio.audio_data, master.audio.samp_freq, int(self.textbox1.get()), int(self.textbox2.get()))
+
+            print("Filter Applied")
+            master.update_graphs()
 
 
         self.apply_button = ctk.CTkButton(self.textbox_frame, text="Apply Filter", command=apply_filter)
