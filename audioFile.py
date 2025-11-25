@@ -43,6 +43,10 @@ class audioFile:
             0, total_duration, len(self.audio_data)
         )
         ax.plot(self.duration, self.audio_data)
+        ax.axis("off")
+        fig.patch.set_facecolor("none")
+        ax.set_facecolor("none")
+
         return fig
 
 
@@ -56,5 +60,8 @@ class audioFile:
         
         ax.plot(xf, np.abs(yf[:N //2]))
 
+        ax.axis("off")
+        fig.patch.set_facecolor("none")
+        ax.set_facecolor("none")
         return fig
         
