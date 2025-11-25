@@ -6,7 +6,6 @@ import tkinter as tk
 from tkinter import messagebox
 import customtkinter as ctk
 from customtkinter import filedialog
-from matplotlib.backends._backend_tk import NavigationToolbar2Tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from audioFile import audioFile
@@ -17,7 +16,7 @@ class UI(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.audio = None  # initializing
+        self.audio = audioFile("test.wav")  # initializing
         self.filter = tk.StringVar(value="")
 
         screen_width = 1200
@@ -68,18 +67,27 @@ class UI(ctk.CTk):
 
         self.freq_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color, highlightbackground=self.graph_color)
         self.freq_domain_graph.grid(row=1, column=0, sticky="ew")
+        self.freq_domain_graph.grid_columnconfigure(0, weight=1)
+        self.freq_domain_graph.grid_rowconfigure(0, weight=1)
 
         self.amp_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color, highlightbackground=self.graph_color)
         self.amp_domain_graph.grid(row=3, column=0, sticky="ew")
+        self.amp_domain_graph.grid_columnconfigure(0, weight=1)
+        self.amp_domain_graph.grid_rowconfigure(0, weight=1)
 
         if self.audio:
-            canvas_freq = FigureCanvasTkAgg(self.audio.drawFreqDomain(), self.freq_domain_graph)
-            canvas_freq.draw()
-            canvas_freq.get_tk_widget().pack()
+            fig1 = self.audio.drawFreqDomain()
+            fig2 = self.audio.drawAmpDomain()
 
-            canvas_amp = FigureCanvasTkAgg(self.audio.drawAmpDomain(), self.amp_domain_graph)
+            canvas_freq = FigureCanvasTkAgg(fig1, self.freq_domain_graph)
+            canvas_freq.draw()
+            canvas_freq.get_tk_widget().configure(background=self.graph_color, )
+            canvas_freq.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+
+            canvas_amp = FigureCanvasTkAgg(fig2, self.amp_domain_graph)
             canvas_amp.draw()
-            canvas_amp.get_tk_widget().pack()
+            canvas_amp.get_tk_widget().configure(background=self.graph_color)
+            canvas_amp.get_tk_widget().grid(row=0, column=0, sticky="nsew")
 
     def on_close(self):
         self.destroy()
