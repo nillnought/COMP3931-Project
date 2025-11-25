@@ -1,7 +1,7 @@
 import soundfile as sf
 import numpy as np
 import sounddevice as sd
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 from scipy.fft import fft, fftfreq
 class audioFile:
 
@@ -35,7 +35,7 @@ class audioFile:
 
 
     def drawAmpDomain(self):
-        fig = plt.figure(figsize=(10, 5))
+        fig = Figure(figsize=(10, 5))
         ax = fig.add_subplot(111)
         audio_file = sf.SoundFile(self.file_address)
         total_duration = audio_file.frames / audio_file.samplerate
@@ -51,7 +51,7 @@ class audioFile:
         yf = fft(self.audio_data)
         xf = fftfreq(N, 1/self.samp_freq)[:N // 2]
 
-        fig = plt.figure(figsize=(10,5))
+        fig = Figure(figsize=(10,5))
         ax = fig.add_subplot(111)
         
         ax.plot(xf, np.abs(yf[:N //2]))
