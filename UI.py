@@ -18,7 +18,7 @@ class UI(ctk.CTk):
         super().__init__()
 
         self.audio = None  # initializing
-        self.filter = tk.StringVar(value="reverb")
+        self.filter = tk.StringVar(value="")
 
         screen_width = 1200
         screen_height = 600
@@ -61,6 +61,11 @@ class UI(ctk.CTk):
         self.update_graphs()
 
     def update_graphs(self):
+        if self.freq_domain_graph:
+           self.freq_domain_graph.destroy()
+        if self.amp_domain_graph:
+           self.amp_domain_graph.destroy()
+
         self.freq_domain_graph = ctk.CTkCanvas(self.graph_frame, bg=self.graph_color, highlightbackground=self.graph_color)
         self.freq_domain_graph.grid(row=1, column=0, sticky="ew")
 
