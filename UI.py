@@ -76,17 +76,10 @@ class UI(ctk.CTk):
             canvas_freq = FigureCanvasTkAgg(self.audio.drawFreqDomain(), self.freq_domain_graph)
             canvas_freq.draw()
             canvas_freq.get_tk_widget().pack()
-            toolbar = NavigationToolbar2Tk(canvas_freq, self.freq_domain_graph)
-            toolbar.update()
-            canvas_freq.get_tk_widget().pack()
 
             canvas_amp = FigureCanvasTkAgg(self.audio.drawAmpDomain(), self.amp_domain_graph)
             canvas_amp.draw()
             canvas_amp.get_tk_widget().pack()
-            toolbar = NavigationToolbar2Tk(canvas_amp, self.amp_domain_graph)
-            toolbar.update()
-            canvas_amp.get_tk_widget().pack()
-
 
     def on_close(self):
         self.destroy()
