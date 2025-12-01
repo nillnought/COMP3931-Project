@@ -11,6 +11,9 @@ class audioFile:
         self.file_address = file_location
         self.audio_data, self.samp_freq = sf.read(file_location)
         self.playing = False
+        self.undo_stack = []
+        self.redo_stack = []
+
         audio_file = sf.SoundFile(file_location)
         total_duration = audio_file.frames / audio_file.samplerate
         self.duration = np.linspace(
@@ -28,11 +31,11 @@ class audioFile:
         sd.wait()
         self.playing = False
     
-    def pauseSound(self):
-        if(self.playing):
-            #pause logic
-            print("pause")
 
+#Call this before applying a filter
+    def saveState(self):
+        self.undo_stack.append(self.audio_data.copy())
+        self.redo_stack.clear()
 
     def drawAmpDomain(self):
         fig = Figure(figsize=(10, 5))
@@ -50,6 +53,18 @@ class audioFile:
         return fig
 
 
+    def undo(self):
+        if not self.undo_stack:
+            return
+        self.redo_stack.append(self.audio_data.copy())
+        self.audio_data = self.undo_stack.pop()
+        
+    def redo(self):
+        if not self.redo_stack:
+            return
+        self.undo_stack.append(self.audio_data.copy)
+        self.audio_data = self.redo_stack.pop()
+
     def drawFreqDomain(self):
         N = len(self.audio_data)
         yf = fft(self.audio_data)
@@ -60,8 +75,10 @@ class audioFile:
         
         ax.plot(xf, np.abs(yf[:N //2]))
 
-        ax.axis("off")
+        # ax.axis("off")
         fig.patch.set_facecolor("none")
         ax.set_facecolor("none")
+        ax.tick_params(axis='x', colors='white')  # X-axis numbers
+        ax.tick_params(axis='y', colors='white')
         return fig
         

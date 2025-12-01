@@ -31,7 +31,6 @@ def echo(audio, samp_freq, delay_ms=300, decay=0.3, repeats = 5):
         filtered_data = sg.fftconvolve(audio, impulse[:, None], mode="full", axes=0)
         return filtered_data
 
-#need to test
 def lowPass(audio, samp_freq, cutoff=20):
     #cutoff high freqs
     N = audio.shape[0]

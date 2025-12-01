@@ -10,10 +10,17 @@ def main():
     # audio = audioFile("test.wav")
     # audio.playSound()
     # YAY LOW PASS WORKS!!!
+    # audio.saveState()
     # audio.audio_data = lowPass(audio.audio_data, audio.samp_freq, 600)
     # audio.playSound()
-    # YAY HIGH PASS WORKS!!!
+    # # YAY HIGH PASS WORKS!!!
+    # audio.saveState()
     # audio.audio_data = highPass(audio.audio_data, audio.samp_freq, 300)
+    # UNDO WORKS!!
+    # audio.playSound()
+    # audio.undo()
+    # audio.playSound()
+    # audio.undo()
     # audio.playSound()
     # YAY BANDPASS WORKS!!!
     # audio.audio_data = bandPass(audio.audio_data, audio.samp_freq, 600, 300)

@@ -16,7 +16,7 @@ class UI(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.audio = audioFile("test.wav")  # initializing
+        self.audio = None  # initializing
         self.filter = tk.StringVar(value="")
 
         screen_width = 1200
