@@ -149,7 +149,8 @@ class UI(ctk.CTk):
     def reset_audio(self):
         if self.audio:
             try:
-                self.audio = audioFile(self.og_audio)
+                self.audio.saveState()
+                self.audio.audio_data = audioFile(self.og_audio).audio_data
                 self.update_graphs()
             except Exception as e:
                 messagebox.showerror("Error", f"Could not pause file:\n{e}")
@@ -243,15 +244,16 @@ class ControlsFrame(ctk.CTkFrame):
         self.undo_redo_frame.grid_columnconfigure((0, 1), weight=1)
         self.undo_redo_frame.grid_rowconfigure(0, weight=1)
 
+
+        self.undo_button = ctk.CTkButton(self.undo_redo_frame, text="Undo", command=master.undo_audio,
+                                          width=control_button_width,
+                                          fg_color=control_button_color, hover_color=control_button_color_hover, corner_radius=0)
+        self.undo_button.grid(row=0, column=0, sticky="nsew")
         self.redo_button = ctk.CTkButton(self.undo_redo_frame, text="Redo", command=master.redo_audio,
                                           width=control_button_width,
                                           fg_color=control_button_color, hover_color=control_button_color_hover,
                                           corner_radius=0)
-        self.redo_button.grid(row=0, column=0, sticky="nsew")
-        self.undo_button = ctk.CTkButton(self.undo_redo_frame, text="Undo", command=master.undo_audio,
-                                          width=control_button_width,
-                                          fg_color=control_button_color, hover_color=control_button_color_hover, corner_radius=0)
-        self.undo_button.grid(row=0, column=1, sticky="nsew")
+        self.redo_button.grid(row=0, column=1, sticky="nsew")
 
         self.reset_button = ctk.CTkButton(self.undo_redo_reset_frame, text="Reset", command=master.reset_audio,
                                           width=control_button_width,
