@@ -54,16 +54,24 @@ class audioFile:
 
 
     def undo(self):
-        if not self.undo_stack:
-            return
-        self.redo_stack.append(self.audio_data.copy())
-        self.audio_data = self.undo_stack.pop()
+        if len(self.undo_stack) > 0:
+            if not self.undo_stack:
+                return 0
+            self.redo_stack.append(self.audio_data.copy())
+            self.audio_data = self.undo_stack.pop()
+            return 1
+        else:
+            return 0
         
     def redo(self):
-        if not self.redo_stack:
-            return
-        self.undo_stack.append(self.audio_data.copy)
-        self.audio_data = self.redo_stack.pop()
+        if len(self.redo_stack) > 0:
+            if not self.redo_stack:
+                return 0
+            self.undo_stack.append(self.audio_data.copy)
+            self.audio_data = self.redo_stack.pop()
+            return 1
+        else:
+            return 0
 
     def drawFreqDomain(self):
         N = len(self.audio_data)

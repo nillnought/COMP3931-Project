@@ -17,6 +17,7 @@ class UI(ctk.CTk):
         super().__init__()
 
         self.audio = None  # initializing
+        self.og_audio = None
         self.filter = tk.StringVar(value="")
 
         screen_width = 1200
@@ -100,7 +101,8 @@ class UI(ctk.CTk):
 
         if file_path:
             try:
-                self.audio = audioFile(file_path)
+                self.og_audio = file_path
+                self.audio = audioFile(self.og_audio)
                 self.filters_frame.enable_filters()
                 self.update_graphs()
                 messagebox.showinfo("Loaded", f"Loaded file:\n{file_path}")
@@ -127,6 +129,7 @@ class UI(ctk.CTk):
         if self.audio:
             try:
                 self.audio = None
+                self.og_audio = None
                 self.filters_frame.disable_filters()
                 self.update_graphs()
             except Exception as e:
@@ -143,14 +146,44 @@ class UI(ctk.CTk):
         else:
             messagebox.showwarning("No file", "Please load a file first!")
 
-    def pause_audio(self):
+    def reset_audio(self):
         if self.audio:
             try:
-                self.audio.pauseSound()
+                self.audio = audioFile(self.og_audio)
+                self.update_graphs()
             except Exception as e:
                 messagebox.showerror("Error", f"Could not pause file:\n{e}")
         else:
             messagebox.showwarning("No file", "Please play a file first!")
+
+    def redo_audio(self):
+        if self.audio:
+            try:
+                success = self.audio.redo()
+                if success == 1:
+                    print("Redo")
+                    self.update_graphs()
+                else:
+                    messagebox.showwarning("Redo", f"There is nothing to redo.")
+            except Exception as e:
+                messagebox.showerror("Error", f"Could not redo file:\n{e}")
+        else:
+            messagebox.showwarning("No file", "Please import a file first!")
+
+    def undo_audio(self):
+        if self.audio:
+            try:
+                success = self.audio.undo()
+                if success == 1:
+                    print("Undo")
+                    self.update_graphs()
+                else:
+                    messagebox.showwarning("Undo", f"There is nothing to undo.")
+            except Exception as e:
+                messagebox.showerror("Error", f"Could not redo file:\n{e}")
+        else:
+            messagebox.showwarning("No file", "Please import a file first!")
+
 
 
 
@@ -199,10 +232,31 @@ class ControlsFrame(ctk.CTkFrame):
                                          width=control_button_width,
                                          fg_color=control_button_color, hover_color=control_button_color_hover, corner_radius=0)
         self.play_button.grid(row=0, column=0, sticky="nsew")
-        self.pause_button = ctk.CTkButton(self.controls_frame, text="Pause", command=master.pause_audio,
+
+        self.undo_redo_reset_frame = ctk.CTkFrame(self.controls_frame, height=height)
+        self.undo_redo_reset_frame.grid(row=0, column=1, sticky="nsew")
+        self.undo_redo_reset_frame.grid_columnconfigure(0, weight=1)
+        self.undo_redo_reset_frame.grid_rowconfigure((0, 1), weight=1)
+
+        self.undo_redo_frame = ctk.CTkFrame(self.undo_redo_reset_frame)
+        self.undo_redo_frame.grid(row=0, column=0, sticky="nsew")
+        self.undo_redo_frame.grid_columnconfigure((0, 1), weight=1)
+        self.undo_redo_frame.grid_rowconfigure(0, weight=1)
+
+        self.redo_button = ctk.CTkButton(self.undo_redo_frame, text="Redo", command=master.redo_audio,
+                                          width=control_button_width,
+                                          fg_color=control_button_color, hover_color=control_button_color_hover,
+                                          corner_radius=0)
+        self.redo_button.grid(row=0, column=0, sticky="nsew")
+        self.undo_button = ctk.CTkButton(self.undo_redo_frame, text="Undo", command=master.undo_audio,
                                           width=control_button_width,
                                           fg_color=control_button_color, hover_color=control_button_color_hover, corner_radius=0)
-        self.pause_button.grid(row=0, column=1, sticky="nsew")
+        self.undo_button.grid(row=0, column=1, sticky="nsew")
+
+        self.reset_button = ctk.CTkButton(self.undo_redo_reset_frame, text="Reset", command=master.reset_audio,
+                                          width=control_button_width,
+                                          fg_color=control_button_color, hover_color=control_button_color_hover, corner_radius=0)
+        self.reset_button.grid(row=1, column=0, sticky="nsew")
 
 class FiltersFrame(ctk.CTkFrame):
     def __init__(self, master, height):
@@ -234,14 +288,15 @@ class FiltersFrame(ctk.CTkFrame):
 
         validate_command = (self.register(only_numbers), "%P")
 
-        self.textbox_label1 = ctk.CTkLabel(self.textbox_frame, text="Enter Cutoff Frequency (High):")
+        self.textbox_label1 = ctk.CTkLabel(self.textbox_frame, text="Enter Higher Cutoff:")
         self.textbox1 = ctk.CTkEntry(self.textbox_frame, placeholder_text="Frequency (Hz)",
             validate="key", validatecommand=validate_command)
-        self.textbox_label2 = ctk.CTkLabel(self.textbox_frame, text="Enter Cutoff Frequency (Low):")
+        self.textbox_label2 = ctk.CTkLabel(self.textbox_frame, text="Enter Lower Cutoff:")
         self.textbox2 = ctk.CTkEntry(self.textbox_frame, placeholder_text="Frequency (Hz)",
             validate="key", validatecommand=validate_command)
 
         def apply_filter():
+            master.audio.saveState()
             match master.filter.get():
                 case "reverb":
                     master.audio.audio_data = filter.reverb(master.audio.audio_data, master.audio.samp_freq)
