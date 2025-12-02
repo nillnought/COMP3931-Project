@@ -181,7 +181,7 @@ class UI(ctk.CTk):
                 else:
                     messagebox.showwarning("Undo", f"There is nothing to undo.")
             except Exception as e:
-                messagebox.showerror("Error", f"Could not redo file:\n{e}")
+                messagebox.showerror("Error", f"Could not undo file:\n{e}")
         else:
             messagebox.showwarning("No file", "Please import a file first!")
 
